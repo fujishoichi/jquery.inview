@@ -76,13 +76,12 @@
     return size;
   }
 
-  function getViewportOffset(viewportSize) {
-    var yOffset = getViewOffset();
+  function getViewportOffset(marginTop) {
     var offset = {
       top:  w.pageYOffset || documentElement.scrollTop   || d.body.scrollTop,
       left: w.pageXOffset || documentElement.scrollLeft  || d.body.scrollLeft
     };
-    offset.top = offset.top + viewportSize.marginTop;
+    offset.top = offset.top + marginTop;
     return offset;
   }
 
@@ -98,7 +97,7 @@
     elementsLength = $elements.length;
     if (elementsLength) {
       viewportSize   = viewportSize   || getViewportSize();
-      viewportOffset = viewportOffset || getViewportOffset(viewportSize);
+      viewportOffset = viewportOffset || getViewportOffset(viewportSize.marginTop);
 
       for (; i<elementsLength; i++) {
         // Ignore elements that are not in the DOM tree
