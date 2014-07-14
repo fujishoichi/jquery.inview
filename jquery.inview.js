@@ -37,8 +37,24 @@
     }
   };
 
+  function getViewOffset(){
+      var yOffset = {};
+      if(w.INVIEW_YT_OFFSET){
+          yOffset.yt = w.INVIEW_YT_OFFSET;
+      }else{
+          yOffset.yt = 0;
+      }
+      if(w.INVIEW_YB_OFFSET){
+          yOffset.yb = w.INVIEW_YB_OFFSET;
+      }else{
+          yOffset.yb = 0;
+      }
+      return yOffset;
+  }
+
   function getViewportSize() {
     var mode, domObject, size = { height: w.innerHeight, width: w.innerWidth };
+    var yOffset = getViewOffset();
 
     // if this is correct then return it. iPad has compat Mode, so will
     // go into check clientHeight/clientWidth (which has the wrong value).
@@ -54,15 +70,20 @@
         };
       }
     }
-
+    size.marginTop = size.height * yOffset.yt/100;
+    size.marginBottom = size.height * yOffset.yb/100;
+    size.height = size.height - size.marginTop - size.marginBottom;
     return size;
   }
 
-  function getViewportOffset() {
-    return {
+  function getViewportOffset(viewportSize) {
+    var yOffset = getViewOffset();
+    var offset = {
       top:  w.pageYOffset || documentElement.scrollTop   || d.body.scrollTop,
       left: w.pageXOffset || documentElement.scrollLeft  || d.body.scrollLeft
     };
+    offset.top = offset.top + viewportSize.marginTop;
+    return offset;
   }
 
   function checkInView() {
@@ -77,7 +98,7 @@
     elementsLength = $elements.length;
     if (elementsLength) {
       viewportSize   = viewportSize   || getViewportSize();
-      viewportOffset = viewportOffset || getViewportOffset();
+      viewportOffset = viewportOffset || getViewportOffset(viewportSize);
 
       for (; i<elementsLength; i++) {
         // Ignore elements that are not in the DOM tree
